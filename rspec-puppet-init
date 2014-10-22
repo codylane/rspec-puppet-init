@@ -1,0 +1,30 @@
+#!/bin/bash
+
+export PATH="/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:$PATH"
+
+/usr/bin/rspec-puppet-init
+
+MODULE_NAME=$(basename $PWD)
+
+cat > .fixtures.yml << EOF
+fixtures:
+#    repositories:
+#        stdlib: git://github.com/puppetlabs/puppetlabs-stdlib.git
+    symlinks:
+        $MODULE_NAME: "#{source_dir}"
+EOF
+
+cat > Rakefile << EOF
+require 'rubygems'
+require 'rake'
+
+require 'rspec/core/rake_task'
+require 'puppetlabs_spec_helper/rake_tasks'
+EOF
+
+cat > spec/spec_helper.rb << EOF
+require 'puppetlabs_spec_helper/module_spec_helper'
+EOF
+
+rm -rf spec/fixtures
+
